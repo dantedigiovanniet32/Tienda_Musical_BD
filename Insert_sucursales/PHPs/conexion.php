@@ -4,6 +4,8 @@ $servidor = "localhost";
 //$port = '3306';
 $usuario = "root";
 $password = "";
+
+//no olvidar, igual al nombre de la base de datos, #create database login_sql
 $base_datos = "login_sql";
 
 $conexion = new mysqli($servidor, $usuario, $password, $base_datos);
