@@ -1,154 +1,163 @@
-CREATE DATABASE login_sql;
-USE login_sql;
+create database musica;
 
+use musica;
 
-CREATE TABLE provincias (
-    id_provincia INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    iva DECIMAL(5,2)
+create table sucursales(
+ID_sucursal int primary key auto_increment not null,
+nombre varchar(25),
+ID_calle int ,
+usuario varchar(25),
+contrasenia int,
+
+foreign key (ID_calle) references calles(ID_calle)
 );
 
-CREATE TABLE localidades_barrios (
-    id_localidad INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    poblacion INT,
-    codigo_postal VARCHAR(20),
-    id_provincia INT,
-    FOREIGN KEY (id_provincia) REFERENCES provincias(id_provincia)
+create table categorias(
+ID_categoria int primary key auto_increment not null,
+nombre varchar(25),
+cant_subcategorias int
 );
 
-CREATE TABLE calle (
-    id_calle INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    altura INT,
-    descripcion VARCHAR(255),
-    id_localidad INT,
-    FOREIGN KEY (id_localidad) REFERENCES localidades_barrios(id_localidad)
+create table calles(
+ID_calle int primary key auto_increment not null,
+nombre varchar(25),
+altura int(4),
+descripcion varchar(50),
+ID_localidad int ,
+
+foreign key (ID_localidad) references localidades(ID_localidad)
 );
 
-CREATE TABLE sucursales (
-    id_sucursal INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    id_calle INT,
-    contrasenia VARCHAR(255),
-    cude VARCHAR(50),
-    correo VARCHAR(100),
-    telefono VARCHAR(50),
-    FOREIGN KEY (id_calle) REFERENCES calle(id_calle)
+create table localidades(
+ID_localidad int primary key auto_increment not null,
+nombre varchar(25),
+poblacion int,
+codigo_postal int(4),
+ID_provincia int,
+
+foreign key (ID_provincia) references provincias(ID_provincia)
 );
 
-CREATE TABLE proveedores (
-    id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    id_calle INT,
-    correo VARCHAR(100),
-    FOREIGN KEY (id_calle) REFERENCES calle(id_calle)
+create table subcategorias(
+ID_subcategoria int primary key auto_increment not null,
+nombre varchar(25),
+ID_categoria int,
+
+foreign key (ID_categoria) references categorias(ID_categoria)
 );
 
-CREATE TABLE clientes (
-    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    dni VARCHAR(20),
-    id_calle INT,
-    correo VARCHAR(100),
-    FOREIGN KEY (id_calle) REFERENCES calle(id_calle)
+create table productos(
+ID_producto int primary key auto_increment not null,
+modelo varchar(25),
+codigo int,
+descripcion varchar(50),
+precio_venta int,
+ID_subcategoria int,
+ID_marca int,
+ID_artista int,
+ID_proveedor int,
+foreign key (ID_subcategoria) references subcategorias(ID_subcategoria),
+foreign key (ID_marca) references marcas(ID_marca),
+foreign key (ID_proveedor) references proveedores(ID_proveedor),
+foreign key (ID_artista) references artistas(ID_artista)
 );
 
-CREATE TABLE categoria (
-    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    cant_subcategorias INT
+create table marcas(
+ID_marca int primary key auto_increment not null,
+nombre varchar(25)
 );
 
-CREATE TABLE subcategoria (
-    id_subcategoria INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    id_categoria INT,
-    FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria)
+create table provincias(
+ID_provincia int primary key auto_increment not null,
+nombre varchar(25),
+IVA int
 );
 
-CREATE TABLE marcas (
-    id_marca INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100)
+create table ventas(
+ID_venta int primary key auto_increment not null,
+ID_sucursal int,
+ID_cliente int,
+ID_forma int,
+fecha date,
+tipo varchar(25),
+ID_empleado int,
+ID_producto int,
+cantidad int,
+precio_total int,
+
+foreign key (ID_sucursal) references sucursales(ID_sucursal),
+foreign key (ID_cliente) references clientes(ID_cliente),
+foreign key (ID_forma) references formas_pago(ID_forma),
+foreign key (ID_empleado) references empleados(ID_empleado),
+foreign key (ID_producto) references productos(ID_producto)
 );
 
-CREATE TABLE artista (
-    id_artista INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    genero_principal VARCHAR(50),
-    ruam VARCHAR(50)
+create table empleados(
+ID_empleado int primary key auto_increment not null,
+nombre varchar(25),
+apellido varchar(25),
+sueldo int,
+ID_sucursal int,
+puesto int,
+
+foreign key (ID_sucursal) references sucursales(ID_sucursales)
 );
 
-CREATE TABLE productos (
-    id_producto INT AUTO_INCREMENT PRIMARY KEY,
-    modelo VARCHAR(100),
-    codigo VARCHAR(50),
-    descripcion VARCHAR(255),
-    precio_venta DECIMAL(10,2),
-    id_subcategoria INT,
-    id_marca INT,
-    id_artista INT,
-    id_proveedor INT,
-    FOREIGN KEY (id_subcategoria) REFERENCES subcategoria(id_subcategoria),
-    FOREIGN KEY (id_marca) REFERENCES marcas(id_marca),
-    FOREIGN KEY (id_artista) REFERENCES artista(id_artista),
-    FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor)
+create table clientes(
+ID_cliente int primary key auto_increment not null,
+nombre varchar(25),
+apellido varchar(25),
+DNI int (8),
+ID_calle int,
+correo int,
+
+foreign key (ID_calle) references calles(ID_calle)
 );
 
-CREATE TABLE inventario (
-    id_inventario INT AUTO_INCREMENT PRIMARY KEY,
-    id_producto INT,
-    cantidad INT,
-    id_sucursal INT,
-    FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
-    FOREIGN KEY (id_sucursal) REFERENCES sucursales(id_sucursal)
+create table formas_pago(
+ID_forma int primary key auto_increment not null,
+forma varchar(25),
+proveedora varchar(25)
 );
 
-CREATE TABLE historial_precios (
-    id_historial INT AUTO_INCREMENT PRIMARY KEY,
-    id_producto INT,
-    precio_anterior DECIMAL(10,2),
-    fecha_cambio DATE,
-    FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+create table historial_precios(
+ID_historial int primary key auto_increment not null,
+ID_producto int,
+precio_anterior int,
+fecha_cambio date,
+
+foreign key (ID_producto) references productos(ID_producto)
 );
 
-CREATE TABLE formas_pago (
-    id_forma INT AUTO_INCREMENT PRIMARY KEY,
-    forma VARCHAR(50),
-    proveedora VARCHAR(100)
+create table inventario(
+ID_inventario int primary key auto_increment not null,
+ID_producto int,
+cantidad int,
+ID_sucursal int,
+
+foreign key (ID_producto) references productos(ID_producto),
+foreign key (ID_sucursal) references sucursales(ID_sucursal)
 );
 
-CREATE TABLE puestos (
-    id_puesto INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    sueldo DECIMAL(10,2)
+create table puestos(
+ID_puesto int primary key auto_increment not null,
+nombre varchar(25),
+sueldo int
 );
 
-CREATE TABLE empleados (
-    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    id_sucursal INT,
-    id_puesto INT,
-    FOREIGN KEY (id_sucursal) REFERENCES sucursales(id_sucursal),
-    FOREIGN KEY (id_puesto) REFERENCES puestos(id_puesto)
+create table proveedores(
+ID_proveedor int primary key auto_increment not null,
+nombre varchar(25),
+ID_calle int,
+correo int,
+
+foreign key (ID_calle) references calles(ID_calle)
 );
 
-CREATE TABLE ventas (
-    id_venta INT AUTO_INCREMENT PRIMARY KEY,
-    id_sucursal INT,
-    id_cliente INT,
-    id_forma INT,
-    fecha DATE,
-    tipo VARCHAR(20),
-    id_empleado INT,
-    id_producto INT,
-    cantidad INT,
-    precio_total DECIMAL(10,2),
-    FOREIGN KEY (id_sucursal) REFERENCES sucursales(id_sucursal),
-    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-    FOREIGN KEY (id_forma) REFERENCES formas_pago(id_forma),
-    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado),
-    FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+create table artistas(
+ID_artista int primary key auto_increment not null,
+nombre varchar(25),
+genero_principal varchar(25),
+RUAM varchar(25)
 );
+
