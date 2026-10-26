@@ -40,10 +40,16 @@ CREATE TABLE sucursales (
 CREATE TABLE proveedores (
     id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
-    id_calle INT,
-    correo VARCHAR(100),
-    FOREIGN KEY (id_calle) REFERENCES calle(id_calle)
+    correo VARCHAR(100)
 );
+INSERT INTO proveedores (nombre, correo) VALUES
+('Importadora Musical S.A.', 'contacto@importadoramusical.com'),
+('Fender Musical Instruments Corp.', 'ventas@fender.com'),
+('Yamaha Music Latin America', 'contacto@yamahamusic.com'),
+('Distribuidores Zildjian Argentina', 'pedidos@zildjiandist.com'),
+('Shure Audio Solutions', 'ventas@shure.com'),
+('Kala Brand Music Co.', 'soporte@kalabrand.com'),
+('Roland & Boss Argentina', 'contacto@roland.com.ar');
 
 CREATE TABLE clientes (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
@@ -142,6 +148,11 @@ CREATE TABLE productos (
     FOREIGN KEY (id_artista) REFERENCES artista(id_artista),
     FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor)
 );
+
+
+
+
+
 
 CREATE TABLE inventario (
     id_inventario INT AUTO_INCREMENT PRIMARY KEY,
