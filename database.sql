@@ -92,6 +92,7 @@ CREATE TABLE artista (
 drop table if exists productos;
 CREATE TABLE productos (
     id_producto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_img varchar(500),
     modelo VARCHAR(100),
     codigo VARCHAR(50),
     descripcion VARCHAR(255),
@@ -105,6 +106,7 @@ CREATE TABLE productos (
     FOREIGN KEY (id_artista) REFERENCES artista(id_artista),
     FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor)
 );
+
 drop table if exists inventario;
 CREATE TABLE inventario (
     id_inventario INT AUTO_INCREMENT PRIMARY KEY,
