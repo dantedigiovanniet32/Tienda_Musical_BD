@@ -2,7 +2,7 @@ drop database if exists tienda_musical;
 create database tienda_musical;
 use tienda_musical;
 
-drop table usuarios;
+drop table if exists usuarios;
 create table usuarios (
     id int unsigned auto_increment primary key,
     nombre varchar(100) not null,
