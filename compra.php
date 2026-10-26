@@ -1,5 +1,41 @@
 
-<?php require_once __DIR__ . '/php/sesion.php'; ?>
+<?php
+require_once __DIR__ . '/php/sesion.php';
+require_once __DIR__ . '/php/conexion.php';
+
+function formatear_precio($precio): string
+{
+    return '$' . number_format((float) $precio, 2, ',', '.');
+}
+
+$idProducto = isset($_GET['id']) ? (int) $_GET['id'] : 1;
+
+$stmt = $conexion->prepare(
+    "SELECT p.id_producto, p.nombre_img, p.modelo, p.descripcion, p.precio_venta, p.codigo,
+            m.nombre AS marca, s.nombre AS subcategoria
+     FROM productos p
+     LEFT JOIN marcas m ON m.id_marca = p.id_marca
+     LEFT JOIN subcategoria s ON s.id_subcategoria = p.id_subcategoria
+     WHERE p.id_producto = ?"
+);
+$stmt->bind_param('i', $idProducto);
+$stmt->execute();
+$producto = $stmt->get_result()->fetch_assoc();
+
+if (!$producto) {
+    $producto = $conexion->query(
+        "SELECT p.id_producto, p.nombre_img, p.modelo, p.descripcion, p.precio_venta, p.codigo,
+                m.nombre AS marca, s.nombre AS subcategoria
+         FROM productos p
+         LEFT JOIN marcas m ON m.id_marca = p.id_marca
+         LEFT JOIN subcategoria s ON s.id_subcategoria = p.id_subcategoria
+         ORDER BY p.id_producto ASC
+         LIMIT 1"
+    )->fetch_assoc();
+}
+
+$imagenPrincipal = $producto['nombre_img'] ?? 'images/image-27-13.png';
+?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -23,19 +59,14 @@
 
       <main class="product-page-main">
         <div class="product-gallery-panel">
-          <div class="gallery-strip">
-            <img src="images/image-27-13.png" alt="Vista 1" />
-            <img src="images/image-28-14.png" alt="Vista 2" />
-            <img src="images/image-29-15.png" alt="Vista 3" />
-          </div>
           <div class="main-product-image">
-            <img src="images/image-27-13.png" alt="Batería Pearl Master Maple" />
+            <img src="<?= h($imagenPrincipal) ?>" alt="<?= h($producto['modelo'] ?? 'Producto') ?>" />
           </div>
         </div>
 
         <div class="purchase-panel">
-          <h1>Bateria Pearl Master Maple Complete Series 3 Cuerpos 923XSP Satin Natural Burst</h1>
-          <div class="purchase-price">$4.578.195,98</div>
+          <h1><?= h($producto['modelo'] ?? 'Producto') ?></h1>
+          <div class="purchase-price"><?= formatear_precio($producto['precio_venta'] ?? 0) ?></div>
 
           <div class="purchase-actions">
             <button class="btn btn-light btn-arrow">‹</button>
@@ -47,15 +78,12 @@
 
       <section class="description-section">
         <h2>Descripcion</h2>
-        <p>
-          Al crear Maple Complete Series, Pearl ha creado una representación de los 25 años de historia de Masters. El sonido que hizo de Masters una leyenda brilla hacia adelante. Con características mejoradas y un precio más bajo, Master Maple Complete es la declaración de percusión total para el baterista profesional.
-        </p>
+        <p><?= h($producto['descripcion'] ?? 'Descripción del producto.') ?></p>
         <ul class="feature-list">
-          <li>Marca: Pearl</li>
-          <li>Modelo: Master Maple Complete Series</li>
-          <li>Material: Maple</li>
-          <li>Cuerpos: 3</li>
-          <li>Medidas: B 22" x 16", TT 12" x 8", TF 16" x 16"</li>
+          <li>Marca: <?= h($producto['marca'] ?? 'Sin marca') ?></li>
+          <li>Modelo: <?= h($producto['modelo'] ?? 'Sin modelo') ?></li>
+          <li>Código: <?= h($producto['codigo'] ?? 'Sin código') ?></li>
+          <li>Categoría: <?= h($producto['subcategoria'] ?? 'Sin categoría') ?></li>
         </ul>
       </section>
 

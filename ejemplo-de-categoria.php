@@ -1,5 +1,25 @@
 
-<?php require_once __DIR__ . '/php/sesion.php'; ?>
+<?php
+require_once __DIR__ . '/php/sesion.php';
+require_once __DIR__ . '/php/conexion.php';
+
+function formatear_precio($precio): string
+{
+    return '$' . number_format((float) $precio, 2, ',', '.');
+}
+
+$productos_categoria = $conexion->query(
+    "SELECT p.id_producto, p.nombre_img, p.modelo, p.precio_venta, p.descripcion
+     FROM productos p
+     INNER JOIN subcategoria s ON s.id_subcategoria = p.id_subcategoria
+     WHERE s.id_subcategoria = 1
+     ORDER BY p.id_producto ASC"
+)->fetch_all(MYSQLI_ASSOC);
+
+if (empty($productos_categoria)) {
+    $productos_categoria = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -29,41 +49,16 @@
           </div>
 
           <div class="catalog-cards">
-            <article class="catalog-item">
-              <img src="images/image-120.png" alt="Bateria Pearl" />
-              <div class="catalog-item-meta">
-                <h3>Bateria Pearl</h3>
-                <span class="badge-sale">43% OFF</span>
-                <strong>$2.244.574,89</strong>
-              </div>
-            </article>
-
-            <article class="catalog-item">
-              <img src="images/image-132.png" alt="Bateria Thunder" />
-              <div class="catalog-item-meta">
-                <h3>Bateria Thunder</h3>
-                <span class="badge-sale">43% OFF</span>
-                <strong>$2.244.574,89</strong>
-              </div>
-            </article>
-
-            <article class="catalog-item">
-              <img src="images/image-138.png" alt="Bateria Acústica" />
-              <div class="catalog-item-meta">
-                <h3>Bateria Acústica</h3>
-                <span class="badge-sale">20% OFF</span>
-                <strong>$2.544.574,89</strong>
-              </div>
-            </article>
-
-            <article class="catalog-item">
-              <img src="images/image-144.png" alt="Bateria Pearl" />
-              <div class="catalog-item-meta">
-                <h3>Bateria Pearl</h3>
-                <span class="badge-sale">70% OFF</span>
-                <strong>$1.244.574,89</strong>
-              </div>
-            </article>
+            <?php foreach (array_slice($productos_categoria, 0, 4) as $producto): ?>
+              <a class="catalog-item product-card-link" href="compra.php?id=<?= (int) $producto['id_producto'] ?>">
+                <img src="<?= h($producto['nombre_img']) ?>" alt="<?= h($producto['modelo']) ?>" />
+                <div class="catalog-item-meta">
+                  <h3><?= h($producto['modelo']) ?></h3>
+                  <span class="badge-sale">Oferta</span>
+                  <strong><?= formatear_precio($producto['precio_venta']) ?></strong>
+                </div>
+              </a>
+            <?php endforeach; ?>
           </div>
         </aside>
 
@@ -71,47 +66,14 @@
           <h1>Baterias Acusticas</h1>
 
           <div class="catalog-grid">
-            <article class="prod-box">
-              <img src="images/image-120.png" alt="Bateria Thunder Azul" />
-              <h3>Bateria Thunder Azul</h3>
-              <span class="badge-sale">43% OFF</span>
-              <strong>$2.244.574,89</strong>
-            </article>
-
-            <article class="prod-box">
-              <img src="images/image-126.png" alt="Bateria Pearl" />
-              <h3>Bateria Pearl</h3>
-              <span class="badge-sale">43% OFF</span>
-              <strong>$2.244.574,89</strong>
-            </article>
-
-            <article class="prod-box">
-              <img src="images/image-132.png" alt="Bateria Thunder" />
-              <h3>Bateria Thunder</h3>
-              <span class="badge-sale">43% OFF</span>
-              <strong>$2.244.574,89</strong>
-            </article>
-
-            <article class="prod-box">
-              <img src="images/image-138.png" alt="Bateria Acústica" />
-              <h3>Bateria Acústica</h3>
-              <span class="badge-sale">20% OFF</span>
-              <strong>$2.544.574,89</strong>
-            </article>
-
-            <article class="prod-box">
-              <img src="images/image-144.png" alt="Bateria Pearl" />
-              <h3>Bateria Pearl</h3>
-              <span class="badge-sale">70% OFF</span>
-              <strong>$1.244.574,89</strong>
-            </article>
-
-            <article class="prod-box">
-              <img src="images/image-150.png" alt="Bateria Pearl" />
-              <h3>Bateria Pearl</h3>
-              <span class="badge-sale">60% OFF</span>
-              <strong>$1.600.574,89</strong>
-            </article>
+            <?php foreach ($productos_categoria as $producto): ?>
+              <a class="prod-box product-card-link" href="compra.php?id=<?= (int) $producto['id_producto'] ?>">
+                <img src="<?= h($producto['nombre_img']) ?>" alt="<?= h($producto['modelo']) ?>" />
+                <h3><?= h($producto['modelo']) ?></h3>
+                <span class="badge-sale">Oferta</span>
+                <strong><?= formatear_precio($producto['precio_venta']) ?></strong>
+              </a>
+            <?php endforeach; ?>
           </div>
         </section>
       </main>

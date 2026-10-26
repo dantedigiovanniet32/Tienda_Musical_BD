@@ -1,5 +1,36 @@
 
-<?php require_once __DIR__ . '/php/sesion.php'; ?>
+<?php
+require_once __DIR__ . '/php/sesion.php';
+require_once __DIR__ . '/php/conexion.php';
+
+function formatear_precio($precio): string
+{
+    return '$' . number_format((float) $precio, 2, ',', '.');
+}
+
+$productos = $conexion->query(
+    "SELECT p.id_producto, p.nombre_img, p.modelo, p.descripcion, p.precio_venta
+     FROM productos p
+     ORDER BY p.id_producto ASC"
+)->fetch_all(MYSQLI_ASSOC);
+
+$productos_baterias = $conexion->query(
+    "SELECT p.id_producto, p.nombre_img, p.modelo, p.descripcion, p.precio_venta
+     FROM productos p
+     INNER JOIN subcategoria s ON s.id_subcategoria = p.id_subcategoria
+     WHERE s.id_subcategoria = 1
+     ORDER BY p.id_producto ASC
+     LIMIT 2"
+)->fetch_all(MYSQLI_ASSOC);
+
+if (empty($productos)) {
+    $productos = [];
+}
+
+if (empty($productos_baterias)) {
+    $productos_baterias = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -40,71 +71,18 @@
         <section id="ofertas" class="offers-section">
           <h2>OFERTAS</h2>
           <div class="offers-grid">
-            <article class="offer-card">
-              <img src="images/image-268.png" alt="Baquetas" />
-              <div class="offer-meta">
-                <h3>Baquetas</h3>
-                <div class="offer-price-row">
-                  <span class="offer-discount">47% OFF</span>
-                  <strong>$34.574,89</strong>
+            <?php foreach ($productos as $producto): ?>
+              <a class="offer-card product-card-link" href="compra.php?id=<?= (int) $producto['id_producto'] ?>">
+                <img src="<?= h($producto['nombre_img']) ?>" alt="<?= h($producto['modelo']) ?>" />
+                <div class="offer-meta">
+                  <h3><?= h($producto['modelo']) ?></h3>
+                  <div class="offer-price-row">
+                    <span class="offer-discount">Oferta</span>
+                    <strong><?= formatear_precio($producto['precio_venta']) ?></strong>
+                  </div>
                 </div>
-              </div>
-            </article>
-
-            <article class="offer-card">
-              <img src="images/image-274.png" alt="Piano Casio Grand" />
-              <div class="offer-meta">
-                <h3>Piano Casio Grand</h3>
-                <div class="offer-price-row">
-                  <span class="offer-discount">-21% OFF</span>
-                  <strong>$343.334,89</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="offer-card">
-              <img src="images/image-280.png" alt="Guitarra Eléctrica Fender" />
-              <div class="offer-meta">
-                <h3>Guitarra Eléctrica Fender</h3>
-                <div class="offer-price-row">
-                  <span class="offer-discount">43% OFF</span>
-                  <strong>$2.244.574,89</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="offer-card">
-              <img src="images/image-287.png" alt="Guitarra eléctrica Leonard" />
-              <div class="offer-meta">
-                <h3>Guitarra Eléctrica Leonard</h3>
-                <div class="offer-price-row">
-                  <span class="offer-discount">25% OFF</span>
-                  <strong>$2.344.574,89</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="offer-card">
-              <img src="images/image-293.png" alt="Ukulele Soprano" />
-              <div class="offer-meta">
-                <h3>Ukulele Soprano</h3>
-                <div class="offer-price-row">
-                  <span class="offer-discount">90% OFF</span>
-                  <strong>$12.334,89</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="offer-card">
-              <img src="images/image-299.png" alt="Auriculares de monitor" />
-              <div class="offer-meta">
-                <h3>Auriculares de Monitor</h3>
-                <div class="offer-price-row">
-                  <span class="offer-discount">87% OFF</span>
-                  <strong>$44.574,89</strong>
-                </div>
-              </div>
-            </article>
+              </a>
+            <?php endforeach; ?>
           </div>
         </section>
 
@@ -114,16 +92,13 @@
           </div>
 
           <div class="mini-product-grid">
-            <article class="mini-product-card">
-              <img src="images/image-13-361.png" alt="Batería Pearl JR" />
-              <h3>Bateria Pearl JR Roadshow</h3>
-              <p>Serie 5 cuerpos + Banqueta Red Wine</p>
-            </article>
-            <article class="mini-product-card">
-              <img src="images/image-14-374.png" alt="Batería Tama" />
-              <h3>Bateria Tama Stage Star</h3>
-              <p>Lime Green con Fiero</p>
-            </article>
+            <?php foreach ($productos_baterias as $producto): ?>
+              <a class="mini-product-card product-card-link" href="compra.php?id=<?= (int) $producto['id_producto'] ?>">
+                <img src="<?= h($producto['nombre_img']) ?>" alt="<?= h($producto['modelo']) ?>" />
+                <h3><?= h($producto['modelo']) ?></h3>
+                <p><?= h($producto['descripcion']) ?></p>
+              </a>
+            <?php endforeach; ?>
           </div>
         </section>
 
