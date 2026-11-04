@@ -1,0 +1,57 @@
+/* todo*/
+body {
+    background-color: #f5f5f7;
+}
+
+/* barra de navegacion*/
+.barra-principal {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+
+.barra-categorias {
+    border-bottom: 1px solid #ddd;
+}
+
+/* para que el menu de subcategorias se abra al pasar el mouse */
+.barra-categorias .nav-item:hover > .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+/* Productos*/
+.tarjeta-producto {
+    border: 1px solid #e3e3e3;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.tarjeta-producto:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+}
+
+.imagen-producto {
+    height: 200px;
+    object-fit: contain;
+    background-color: #fff;
+    padding: 0.75rem;
+}
+
+.precio {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* ===== Panel de la empresa (mas simple y con mas contraste) ===== */
+.panel-empresa {
+    background-color: #fff;
+    border: 2px solid #212529;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.panel-empresa h3 {
+    letter-spacing: 1px;
+    color: #212529;
+}
