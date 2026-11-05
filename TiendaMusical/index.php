@@ -1,5 +1,5 @@
 <?php
-// Pagina principal: muestra la vista del usuario o la vista de la empresa
+
 $vista = "usuario";
 
 if (isset($_GET['vista']) && $_GET['vista'] == "empresa") {
